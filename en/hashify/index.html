@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html lang="pt-BR">
+<meta name="viewport" content="initial-scale=1">
+<head>
+	<script type="text/javascript" src="src/libs/jquery-3.4.1.min.js" defer></script>
+	<script type="text/javascript" src="src/libs/sha.js" defer></script>
+	<script type="text/javascript" src="src/libs/mo.min.js" defer></script>
+	<script type="text/javascript" src="src/libs/jsbi.mjs" defer></script>
+	<script type="text/javascript" src="src/js/custom_fonts.js" defer></script>
+	<script type="text/javascript" src="src/js/custom_icons.js" defer></script>
+	<script type="text/javascript" src="src/js/hashify.js" defer></script>
+	<script type="text/javascript" src="src/js/hashifypass.js" defer></script>
+	<script type="text/javascript" src="src/js/bundle.js" defer></script>
+	<link rel=stylesheet href="src/css/custom.css">
+</head>
+<body>
+	<div class="header">
+		<h1 class="header"> HashifyPass </h1>
+	</div>
+	<div class="box">
+		<form class="form" onsubmit="return jsSubmit(event)">
+			<div class="login-fields" id="loginFields">
+				<div class="username field">
+					<input type="text" name="username" id="usernameField" placeholder="Usuario"></input>
+				</div>
+				<div class="password field">
+					<input type="password" name="password" id="passwordField" placeholder="Senha"></input>
+				</div>
+			</div>
+			<div class="login button">
+				<button class="login button" name="login" type="submit">
+					Entrar
+				</button>
+			</div>
+			<div class="hashify button">
+				<button id="hashifyPassButton" type="button">
+					Hashify
+				</button>
+			</div>
+		</form>
+	</div>
+</body>
+</html>

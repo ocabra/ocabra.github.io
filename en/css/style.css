@@ -1,10 +1,6 @@
-
-@font-face { font-family: Delicious; src: url('./fonts/IBMPlexMono-Regular.ttf'); } 
-@font-face { font-family: Delicious; font-weight: bold; src: url('./fonts/IBMPlexMono-Bold.ttf');}
-
 body {
-    background-color: #FFFFFF;
-    font-family: Delicious, sans-serif;
+    background-color: #FDF5E6;
+    font-family: 'Lato', Arial, sans-serif;
     line-height: 1.6;
     margin-left: 10%;
     margin-right: 10%;
@@ -12,7 +8,7 @@ body {
 }
 
 h1 {
-    color: #000000;
+    color: #6096B4;
     font-size: 2.2rem;
     margin-bottom: 10px;
 }

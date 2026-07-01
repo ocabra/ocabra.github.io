@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato&display=swap" />
+    <link rel="stylesheet" href="../css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proposta de Pesquisa</title>
+</head>
+<body>
+  <h1>
+      Proposta de Pesquisa: Utilizando Bases de Dados Vetoriais para Busca Semântica em Textos e Imagens de Biblioteca
+      Digital
+  </h1>
+    <p>
+        <b>Aluno</b>: Henrique Araújo de Carvalho<br>
+        <b>Orientador</b>: Prof. Dr. Daniel Macêdo Batista
+    </p>
+    <h2>Introdução e Justificativa</h2>
+      <p>
+        Esta proposta de pesquisa tem como objetivo investigar o uso de bases de dados vetoriais para melhorar a
+        busca em textos e imagens em documentos. Ao final da pesquisa, terei desenvolvido um sistema que realiza
+        buscas semânticas na biblioteca digital de teses da Universidade de São Paulo (USP).
+      </p>
+      <p>
+        O objetivo é analisar a eficácia de buscas semânticas em comparação com buscas lexicográficas tradicionais,
+        demonstrando os potenciais benefícios em termos de precisão e relevância dos resultados. Ao implementar esse sistema de
+        busca no contexto das teses da USP, pretende-se avaliar se as bases de dados vetoriais podem ser utilizadas
+        para buscar conhecimento de forma mais intuitiva e fornecer resultados mais relevantes aos usuários.
+      </p>
+      <p>
+        Para mensurar a efetividade dessa abordagem, serão propostas métricas de avaliação de desempenho, considerando
+        a qualidade dos resultados obtidos e aspectos de desempenho do sistema de software, como memória e velocidade.
+      </p>
+
+      <h3>Bases de Dados Vetoriais</h3>
+        <p>
+            Os vetores, que podem ser interpretados como representações matemáticas de características ou atributos,
+            podem ser utilizados para representar documentos, imagens, vídeos e texto simples. Para isso, são
+            empregadas técnicas de aprendizado de máquina que transformam essas estruturas em <i>embeddings</i>,
+            que descrevem os objetos com valores numéricos em centenas ou milhares de dimensões diferentes.
+        </p>
+        <p>
+            Os bancos de dados vetoriais são construídos especialmente para lidar com a estrutura única dos <i>embeddings</i>.
+            Eles indexam os vetores para facilitar a busca, comparando os valores e encontrando aqueles que são mais
+            similares entre si. Exemplos de bases de dados vetoriais são Qdrant e Weaviate. Eu pretendo avaliar a utilização
+            de ambas no sistema de software proposto.
+        </p>
+
+      <h3>Busca Semântica em Textos e Imagens</h3>
+        <p>
+          A busca semântica em textos e imagens utiliza <i>embeddings</i> gerados por modelos de processamento de
+          linguagem natural e outros modelos específicos para representar o significado e o contexto dos objetos de
+          dados. Ao utilizar bancos de dados vetoriais, é possível realizar buscas mais precisas e relevantes, sem
+          depender apenas de palavras-chave e metadados.
+        </p>
+        <p>
+          Com o uso de bases de dados vetoriais e algoritmos de busca apropriados, a proposta desta pesquisa é
+          desenvolver um sistema inteligente de busca semântica em textos e imagens das teses da USP, melhorando
+          significativamente a experiência do usuário e a precisão dos resultados obtidos.
+        </p>
+
+<h2>Objetivos</h2>
+<ol>
+    <li>Entender e explicar o que são, como funcionam e para que servem as bases de dados vetoriais, explorando a forma que <i>embeddings</i> são gerados e armazenados nessas bases;</li>
+    <li>Entender e explicar como são realizadas buscas de embeddings nessas bases de dados e por que seriam mais eficientes que as buscas lexicográficas tradicionais;</li>
+    <li>Implementar um sistema de busca semântica baseado em bases de dados vetoriais no contexto das teses da USP;</li>
+    <li>Avaliar a eficácia das buscas semânticas em comparação às buscas lexicográficas, considerando a qualidade dos resultados, a performance do sistema, a memória e a velocidade.</li>
+</ol>
+<h2>Plano de Trabalho e Cronograma</h2>
+<table border="1">
+    <tr>
+        <th>Mês</th>
+        <th>Atividades</th>
+    </tr>
+    <tr>
+        <td>Maio</td>
+        <td>
+            <ul>
+                <li>Leitura de textos e de documentação sobre bases de dados vetoriais para melhor compreensão do problema.</li>
+                <li>Desenvolvimento de um protótipo do sistema de busca semântica.</li>
+                <li>Coleta de trabalhos e textos relevantes para revisão teórica.</li>
+            </ul>
+        </td>
+    </tr>
+   <tr>
+        <td>Junho</td>
+        <td>
+            <ul>
+                <li>Revisão teórica sobre embeddings e bases de dados vetoriais.</li>
+            </ul>
+        </td>
+   </tr>
+
+    <tr>
+        <td>Julho</td>
+       <td>
+            <ul>
+                <li>Revisão teórica sobre embeddings e bases de dados vetoriais.</li>
+                <li>
+                    Decisão sobre as bases de dados a serem utilizadas para o sistema e exploração de configurações das
+                    bases de dados.
+                </li>
+                <li>
+                    Desenho da arquitetura do sistema de busca a ser desenvolvido.
+                </li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>Agosto</td>
+        <td>
+           <ul>
+                <li>
+                    Coleta, estruturação e armazenamento de dados de texto que serão utilizados no sistema de busca.
+                </li>
+               <li>
+                   Desenvolvimento do sistema de busca principal, rodando localmente a princípio.
+               </li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>Setembro</td>
+        <td>
+            <ul>
+                <li>Finalização do sistema de busca principal, hospedando-o em um website.</li>
+                <li>Escrita da primeira minuta e estrutura da monografia.</li>
+                <li>Desenho de métodos de avaliação de desempenho do sistema, com definição de métricas.</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>Outubro</td>
+        <td>
+            <ul>
+                <li>Avaliação de desempenho do sistema, com exploração de diferentes configurações das bases de dados
+                    e, possivelmente, com avaliação de diferentes bases de dados.</li>
+                <li>Escrita da monografia.</li>
+            </ul>
+        </td>
+    </tr>
+   <tr>
+        <td>Novembro</td>
+        <td>
+            <ul>
+                <li>Coletas de dados sobre desempenho e ajustes no sistema de software, conforme resultados.</li>
+                <li>Criação do pôster.</li>
+                <li>Escrita da monografia.</li>
+            </ul>
+        </td>
+   </tr>
+   <tr>
+        <td>Dezembro</td>
+        <td>
+            <ul>
+                <li>Ajustes finais na monografia e no sistema de software.</li>
+                <li>Entrega da monografia.</li>
+            </ul>
+        </td>
+   </tr>
+</table>
+
+</body>
+</html>
