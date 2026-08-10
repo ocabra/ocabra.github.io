@@ -1,9 +1,10 @@
-// calcunt frontend. No backend, no build step: reads data/db.csv +
-// data/goals.json + data/ntlabel/*.json directly in the browser. See SCHEMA.md.
+// calcunt frontend. No build step: reads the public, read-only Supabase REST
+// API directly in the browser. The publishable key is safe to expose because
+// RLS allows anon SELECT only; it grants no INSERT, UPDATE, or DELETE access.
 
-const DB_CSV_URL = "data/db.csv";
-const GOALS_URL = "data/goals.json";
-const NTLABEL_DIR = "data/ntlabel";
+const SUPABASE_URL = "https://lncciiekrzsvfjjuumbu.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_RZ7MFuoqv9ClsuQLxwTAZQ_xzhk_e-h";
+const REST_PAGE_SIZE = 500;
 
 const MEAL_ORDER = { breakfast: 0, lunch: 1, dinner: 2, snack: 3 };
 const MEALS = Object.keys(MEAL_ORDER);
@@ -30,6 +31,16 @@ function mealRank(meal) {
   return MEAL_ORDER.hasOwnProperty(meal) ? MEAL_ORDER[meal] : 99;
 }
 
+// Eating timestamps are timezone-free wall-clock values. Extract the calendar
+// date from PostgREST's ISO representation without constructing a Date, which
+// would incorrectly apply the browser's timezone.
+function calendarDate(timestamp) {
+  if (!/^\d{4}-\d{2}-\d{2}[T ]/.test(timestamp)) {
+    throw new Error(`invalid eating timestamp: ${timestamp}`);
+  }
+  return timestamp.slice(0, 10);
+}
+
 // goals.json is keyed by meal; day-level views (Today, Week, Month, All)
 // use the daily total, which is just the sum across the four meals.
 function dailyGoal(goals, metric) {
@@ -38,58 +49,23 @@ function dailyGoal(goals, metric) {
 
 // -- fetching ---------------------------------------------------------
 
-async function fetchText(url) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`fetch ${url} failed: ${res.status}`);
-  return res.text();
-}
-
-async function fetchJSON(url) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`fetch ${url} failed: ${res.status}`);
-  return res.json();
-}
-
-// -- parsing ------------------------------------------------------------
-
-function parseCSV(text) {
-  const lines = text.trim().split("\n").filter((l) => l.trim() !== "");
-  const header = lines[0].split(",").map((h) => h.trim());
-  const rows = lines.slice(1).map((line) => {
-    const cells = line.split(",").map((c) => c.trim());
-    const row = {};
-    header.forEach((key, i) => (row[key] = cells[i]));
-    row.quantity_g = parseFloat(row.quantity_g);
-    return row;
-  });
-  log(`parsed ${rows.length} rows from db.csv`);
+async function fetchTable(table, query) {
+  const rows = [];
+  for (let offset = 0; ; offset += REST_PAGE_SIZE) {
+    const pageQuery = `${query}&limit=${REST_PAGE_SIZE}&offset=${offset}`;
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${pageQuery}`, {
+      cache: "no-store",
+      headers: { apikey: SUPABASE_PUBLISHABLE_KEY },
+    });
+    if (!res.ok) {
+      const detail = await res.text();
+      throw new Error(`fetch ${table} failed: ${res.status} ${detail}`);
+    }
+    const page = await res.json();
+    rows.push(...page);
+    if (page.length < REST_PAGE_SIZE) break;
+  }
   return rows;
-}
-
-async function loadNutritionLabels(foodIds) {
-  const labels = new Map();
-  await Promise.all(
-    foodIds.map(async (id) => {
-      try {
-        const label = await fetchJSON(`${NTLABEL_DIR}/${id}.json`);
-        labels.set(id, label);
-        log(`loaded nutrition label: ${id}`);
-      } catch (err) {
-        console.warn(`[calcunt] missing nutrition label for "${id}":`, err.message);
-        labels.set(id, {
-          id,
-          name: `${id} (missing label)`,
-          per_g: 100,
-          calories: 0,
-          carbs_g: 0,
-          protein_g: 0,
-          fat_g: 0,
-          fiber_g: 0,
-        });
-      }
-    })
-  );
-  return labels;
 }
 
 function enrichRows(rows, labels) {
@@ -182,9 +158,9 @@ function renderTabular(enriched) {
 // -- week / month bar charts ----------------------------------------------
 
 function fmtDate(d) {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(d.getUTCDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
 }
 
@@ -192,7 +168,7 @@ function trailingDates(n) {
   const days = [];
   for (let i = n - 1; i >= 0; i--) {
     const d = new Date();
-    d.setDate(d.getDate() - i);
+    d.setUTCDate(d.getUTCDate() - i);
     days.push(fmtDate(d));
   }
   return days;
@@ -222,8 +198,8 @@ function roundedTopBarPath(x, y, w, h, r) {
 }
 
 function weekdayShort(dateStr) {
-  const d = new Date(dateStr + "T00:00:00");
-  return d.toLocaleDateString("en-US", { weekday: "short" });
+  const d = new Date(dateStr + "T00:00:00Z");
+  return d.toLocaleDateString("en-US", { weekday: "short", timeZone: "UTC" });
 }
 
 function dateShort(dateStr) {
@@ -612,7 +588,7 @@ function renderAll(enriched, goals) {
 
   const weeks = weeksThatFit(shells[0].grid);
   const today = new Date();
-  const totalDays = (weeks - 1) * 7 + (today.getDay() + 1); // anchor to Sunday..today
+  const totalDays = (weeks - 1) * 7 + (today.getUTCDay() + 1); // anchor to Sunday..today
   const days = trailingDates(totalDays);
 
   for (const { metric, grid } of shells) {
@@ -671,7 +647,7 @@ function initGranularityTabs(onChange) {
 // -- init ---------------------------------------------------------------
 
 async function init() {
-  log("init: loading db.csv and goals.json");
+  log("init: loading entries, foods, and goals from Supabase");
   const state = { enriched: null, goals: null, granularity: "aggregate" };
 
   function renderWeekAndMonth() {
@@ -705,14 +681,21 @@ async function init() {
     renderWeekAndMonth();
   });
 
-  let rows, goals;
+  let rows, labels, goals;
   try {
-    const [csvText, goalsJSON] = await Promise.all([
-      fetchText(DB_CSV_URL),
-      fetchJSON(GOALS_URL),
+    const [entryRows, foodRows, goalRows] = await Promise.all([
+      fetchTable("food_entries", "select=eaten_on,meal,food_id,quantity_g&order=eaten_on.desc,meal.asc,id.asc"),
+      fetchTable("foods", "select=id,name,per_g,calories,carbs_g,protein_g,fat_g,fiber_g&order=id.asc"),
+      fetchTable("meal_goals", "select=meal,calories,carbs_g,protein_g,fat_g&order=meal.asc"),
     ]);
-    rows = parseCSV(csvText);
-    goals = goalsJSON;
+    rows = entryRows.map((row) => ({
+      date: calendarDate(row.eaten_on),
+      meal: row.meal,
+      food_id: row.food_id,
+      quantity_g: Number(row.quantity_g),
+    }));
+    labels = new Map(foodRows.map((label) => [label.id, label]));
+    goals = Object.fromEntries(goalRows.map(({ meal, ...goal }) => [meal, goal]));
   } catch (err) {
     console.error("[calcunt] failed to load data:", err);
     const message = "failed to load data: " + err.message;
@@ -721,10 +704,6 @@ async function init() {
     }
     return;
   }
-
-  const foodIds = [...new Set(rows.map((r) => r.food_id))];
-  log(`loading ${foodIds.length} nutrition labels`, foodIds);
-  const labels = await loadNutritionLabels(foodIds);
 
   const enriched = enrichRows(rows, labels);
   log(`enriched ${enriched.length} rows with nutrition data`);
