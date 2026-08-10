@@ -1,0 +1,6 @@
+{
+  "breakfast": { "calories": 400, "carbs_g": 50, "protein_g": 35, "fat_g": 10 },
+  "lunch": { "calories": 550, "carbs_g": 48, "protein_g": 47, "fat_g": 18 },
+  "dinner": { "calories": 510, "carbs_g": 40, "protein_g": 46, "fat_g": 18 },
+  "snack": { "calories": 310, "carbs_g": 32, "protein_g": 30, "fat_g": 8 }
+}

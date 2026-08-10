@@ -1,0 +1,10 @@
+{
+  "id": "granola",
+  "name": "Granola",
+  "per_g": 100,
+  "calories": 450,
+  "carbs_g": 60,
+  "protein_g": 10,
+  "fat_g": 18,
+  "fiber_g": 7
+}
